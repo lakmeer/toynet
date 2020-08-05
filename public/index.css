@@ -1,0 +1,21 @@
+
+/* SETUP */
+
+
+
+/* MAIN LAYOUT */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background: #223;
+}
+
+body {
+  display: flex;
+  font-family: monospace;
+  align-items: stretch;
+}
+
