@@ -1,7 +1,7 @@
 
 # Imports
 { log, unwords, unlines } = require \utils
-{ sqrt, log:ln, exp, sin, cos, random, PI } = Math
+{ sqrt, log:ln, exp, sin, cos, random, PI, min, max } = Math
 
 # Constants
 export const TAU = PI * 2
@@ -20,7 +20,9 @@ export rand-range = (a, b) -> a + (b - a) * random!
 
 # Linear
 
+export sum = (.reduce (+), 0)
 export sigmoid = (x) -> 1/(1 + exp -x)
+export relu = (x) -> max(0, x)
 
 
 # Vectors
@@ -29,9 +31,12 @@ export sigmoid = (x) -> 1/(1 + exp -x)
 # Matrices
 
 export matrix = ([ w, h ], v = -> 0) -> [ [ v! for til w ] for til h ]
-export stringify-matrix = (m) -> '[' + ((m.map unwords).join '\n ') + ']'
+export stringify-matrix = (m) -> '\n[' + ((m.map (.map (.toFixed 3)) .map unwords).join '\n ') + ']'
 
 export matmul = (a, b) ->
+
+  log "MATMUL: " + a.length + 'x' + a[0].length + ", " + b.length + "x" + b[0].length
+
   result = []
 
   for x,i in a
@@ -56,6 +61,22 @@ export matadd = (a, b) ->
 
   result
 
+export dot = (xs, ys) ->
+  if (xs.length isnt ys.length)
+    console.warn "Math::dot - lengths must be the same"
+    return 0
+  sum [ x + ys[i] for x,i in xs ]
 
+export add = (xs, ys) ->
+  if (xs.length isnt ys.length)
+    console.warn "Math::add - lengths must be the same"
+    return 0
+  [ x + ys[i] for x,i in xs ]
+
+export sub = (xs, ys) ->
+  if (xs.length isnt ys.length)
+    console.warn "Math::sub - lengths must be the same"
+    return 0
+  [ x - ys[i] for x,i in xs ]
 
 

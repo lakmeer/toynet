@@ -2,9 +2,10 @@
 # Require
 
 { id, log, initial, tail, zip, tuples, Q } = require \utils
-{ matmul, matadd, sigmoid, matrix, stringify-matrix, rand-sd } = require \math
+{ add, sub, dot, sum, matmul, matadd, sigmoid, relu, matrix, stringify-matrix, rand-sd } = require \math
 
 GUI = require \dat.gui
+Plot = require \./plot
 
 
 # Net model
@@ -19,21 +20,19 @@ net = do
   activation = sigmoid
 
   predict = (a) ->
-    log "Net::predict - inputs:", a
+    log "Net::predict - inputs:", stringify-matrix a
 
     for w,ix in weights
       b = biases[ix]
-      a := ((w `matmul` a) `matadd` b).map activation
-      log a
-      log "Net::predict - layer:", stringify-matrix a
+      log \weights stringify-matrix w
+      log \biases stringify-matrix b
+      a := ((w `matmul` a) `matadd` b)
+      log "Net::predict - layer:", a
 
     log "Net::predict - prediction:", stringify-matrix a
 
 
   { predict }
-
-
-
 
 
 # Main Program
@@ -43,4 +42,42 @@ document.add-event-listener \DOMContentLoaded, ->
   log "ToyNet::init - ok"
 
 
-  net.predict [ 1 for from 1 to 10 ]
+  # NNFS method
+
+  new-layer = (input-size, output-size) ->
+    weights: matrix [ input-size, output-size ], rand-sd
+    biases:  [ 0 for til output-size ]
+
+  compute-layer = (input-batch, { weights, biases }, activation) ->
+    for inputs in input-batch
+      (weights.map (`dot` inputs)) `add` biases |> (.map activation)
+
+  new-network = (layer-sizes, activation = id) ->
+    activation: activation
+    layers:
+      for [ in-size, out-size ] in tuples (initial layer-sizes), (tail layer-sizes)
+        new-layer in-size, out-size
+
+  compute-network = (inputs, nn) ->
+    for layer,ix in nn.layers
+      inputs := compute-layer inputs, layer, nn.activation
+    inputs
+
+
+  # TEST
+
+  nn = new-network [1 8 8 1], relu
+
+  inputs = [ [ Math.sin x ] for x from 0 to 6 by 0.1 ]
+  output = compute-network inputs, nn
+
+  plot = Plot -6, 6
+  plot.series [ inputs, output ]
+
+  error = sum (inputs `sub` output)
+
+  log error
+
+
+
+
