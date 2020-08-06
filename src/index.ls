@@ -8,33 +8,6 @@ GUI = require \dat.gui
 Plot = require \./plot
 
 
-# Net model
-
-net = do
-  layer-sizes   = [3,5,10]
-  weight-shapes = tuples (initial layer-sizes), (tail layer-sizes)
-
-  weights = [ matrix w, rand-sd for w in weight-shapes ]
-  biases  = [ matrix [h, 1] for h in tail layer-sizes ]
-
-  activation = sigmoid
-
-  predict = (a) ->
-    log "Net::predict - inputs:", stringify-matrix a
-
-    for w,ix in weights
-      b = biases[ix]
-      log \weights stringify-matrix w
-      log \biases stringify-matrix b
-      a := ((w `matmul` a) `matadd` b)
-      log "Net::predict - layer:", a
-
-    log "Net::predict - prediction:", stringify-matrix a
-
-
-  { predict }
-
-
 # Main Program
 
 document.add-event-listener \DOMContentLoaded, ->
@@ -42,7 +15,7 @@ document.add-event-listener \DOMContentLoaded, ->
   log "ToyNet::init - ok"
 
 
-  # NNFS method
+  # NNFS model
 
   new-layer = (input-size, output-size) ->
     weights: matrix [ input-size, output-size ], rand-sd
@@ -67,6 +40,7 @@ document.add-event-listener \DOMContentLoaded, ->
   # TEST
 
   nn = new-network [1 8 8 1], relu
+
 
   inputs = [ [ Math.sin x ] for x from 0 to 6 by 0.1 ]
   output = compute-network inputs, nn
