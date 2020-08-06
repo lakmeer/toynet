@@ -25,6 +25,10 @@ export pad = (l, n) --> if n.length < l then (([ '0' ] * (l - n.length)).join ''
 
 export to-array = (alo) -> Array::slice.apply alo
 
+export initial = (a) -> a[0 to -2]
+export head    = (a) -> if a[0] then that else null
+export tail    = (a) -> a[1 to a[*]]
+export unwords = (.join " ")
 export unlines = (.join "\n")
 
 export zip = (as, bs) ->
@@ -34,6 +38,9 @@ export zip = (as, bs) ->
     out.push a
     out.push b
   return out
+
+export tuples = (as, bs) ->
+  [ [a,bs[ix]] for a,ix in as ]
 
 
 # DOM

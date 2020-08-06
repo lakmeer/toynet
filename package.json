@@ -27,6 +27,7 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "browser": {
+    "math": "./src/math.ls",
     "utils": "./src/utils.ls"
   },
   "browserify": {
